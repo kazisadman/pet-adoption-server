@@ -46,6 +46,18 @@ async function run() {
       res.send(result);
     });
 
+    app.patch("/pets/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          adopted: "true",
+        },
+      };
+      const result = await petsCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    });
+
     // users
     app.get("/users", async (req, res) => {
       const result = await userCollection.find().toArray();
