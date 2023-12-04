@@ -33,9 +33,16 @@ async function run() {
 
     const petsCollection = client.db("petdb").collection("pets");
     const userCollection = client.db("petdb").collection("users");
+    const adoptionCollection = client.db("petdb").collection("adoption");
 
     app.get("/pets", async (req, res) => {
       const result = await petsCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.post("/pets", async (req, res) => {
+      const petsInfo = req.body;
+      const result = await petsCollection.insertOne(petsInfo);
       res.send(result);
     });
 
@@ -55,6 +62,13 @@ async function run() {
         },
       };
       const result = await petsCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    });
+
+    app.delete("/pets/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await petsCollection.deleteOne(query);
       res.send(result);
     });
 
@@ -79,6 +93,18 @@ async function run() {
         },
       };
       const result = await userCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    });
+
+    //adoption request
+    app.get("/adoption", async (req, res) => {
+      const result = await adoptionCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.post("/adoption", async (req, res) => {
+      const pet = req.body;
+      const result = await adoptionCollection.insertOne(pet);
       res.send(result);
     });
   } finally {
